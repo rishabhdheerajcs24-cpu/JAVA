@@ -1,0 +1,171 @@
+import java.util.Scanner;
+
+class Account 
+{
+    String custName;
+    String accNum;
+    String accType;
+    double bal;
+
+    Account(String custName, String accNum, String accType, double initialBalance) {
+        this.custName = custName;
+        this.accNum = accountNumber;
+        this.accType = accountType;
+        this.bal = initialBalance;
+    }
+
+    void deposit(double amount) 
+    {
+        if (amount > 0) 
+        {
+            bal += amount;
+            System.out.println("Deposited: " + amount);
+        } 
+        else 
+        {
+            System.out.println("Invalid deposit amount.");
+        }
+    }
+
+
+    void display() {
+        System.out.println("Current Balance: " + bal);
+    }
+}
+
+class Saving extends Account 
+{
+    double INTEREST_RATE = 0.05; 
+
+    Saving(String custName, String acccNum, double initialBalance) 
+    {
+        super(custName, accNum, "Savings", initialBalance);
+    }
+
+    void Interest(int years) {
+        double interest = balance * Math.pow((1 + INTEREST_RATE), years) - bal;
+        balance += interest;
+        System.out.println("Interest of " + String.format("%.2f", interest) + " added to your account.");
+    }
+    void withdraw(double amount) 
+    {
+        if (amount <= bal) 
+        {
+            bal -= amount;
+            System.out.println("Withdrawn:" + amount);
+        } else 
+        {
+            System.out.println("Insufficient balance!");
+        }
+    }
+}
+
+class Current extends Account {
+    static final double MIN_BALANCE = 1000.0;
+    static final double SERVICE_CHARGE = 50.0;
+
+    public Current(String custName, String accNum, double initialBalance) 
+    {
+        super(custName, accNum, "Current", initialBalance);
+    }
+
+    void withdraw(double amount) {
+        if (amount <= bal) {
+            bal -= amount;
+            System.out.println("Withdrawn: ₹" + amount);
+            checkMinimumBalance();
+        } else {
+            System.out.println("Insufficient balance!");
+        }
+    }
+
+    void checkMinimumBalance() {
+        if (bal < MIN_BALANCE) {
+            bal -= SERVICE_CHARGE;
+            System.out.println("Balance below minimum! Service charge of ₹" + SERVICE_CHARGE + " imposed.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+
+        System.out.println("Enter Customer Name:");
+        String name = in.nextLine();
+
+        System.out.println("Enter Account Number:");
+        String accNo = in.nextLine();
+
+        System.out.println("Enter Account Type (savings/current):");
+        String type = in.nextLine().toLowerCase();
+
+        System.out.println("Enter Initial Balance:");
+        double bal = in.nextDouble();
+
+        Account account;
+
+        if (type.equals("savings")) 
+        {
+            account = new Saving(name, accNo, bal);
+        }
+        else 
+        {
+            account = new Current(name, accNo, bal);
+        }
+
+        int choice;
+        do {
+            System.out.println("\nOptions Available");
+            System.out.println("1. Deposit");
+            System.out.println("2. Withdraw");
+            System.out.println("3. Display Balance");
+            if (account instanceof Saving)
+                System.out.println("4. Compute and Deposit Interest");
+            System.out.println("5 . Exit");
+            System.out.print("Enter choice: ");
+            choice = in.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter amount to deposit: ");
+                    double depositAmount = in.nextDouble();
+                    account.deposit(depositAmount);
+                    break;
+
+                case 2:
+                    System.out.print("Enter amount to withdraw: ");
+                    double withdrawAmount = in.nextDouble();
+                    if (account instanceof Saving) {
+                        ((Saving) account).withdraw(withdrawAmount);
+                    } else {
+                        ((Current) account).withdraw(withdrawAmount);
+                    }
+                    break;
+
+                case 3:
+                    account.display();
+                    break;
+
+                case 4:
+                    if (account instanceof Saving) {
+                        System.out.print("Enter number of years for interest: ");
+                        int years = in.nextInt();
+                        ((Saving) account).Interest(years);
+                    } else {
+                        System.out.println("Interest computation not available for Current Account.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("Exiting Program ");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        } while (choice != 0);
+
+        in.close();
+    }
+}
