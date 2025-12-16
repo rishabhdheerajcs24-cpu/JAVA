@@ -1,0 +1,32 @@
+
+interface Outer {
+    void outerMethod();
+
+    interface Inner {
+        void innerMethod();
+    }
+
+
+class OuterImpl implements Outer {
+    public void outerMethod() {
+        System.out.println("Outer interface method invoked.");
+    }
+}
+
+
+class InnerImpl implements Outer.Inner {
+    public void innerMethod() {
+        System.out.println("Inner (nested) interface method invoked.");
+    }
+}
+
+class nested{
+    public static void main(String[] args) {
+    
+        Outer obj = new OuterImpl();
+        obj.outerMethod();
+
+        Outer.Inner obj1 = new InnerImpl();
+        obj1.innerMethod();
+    }
+}
